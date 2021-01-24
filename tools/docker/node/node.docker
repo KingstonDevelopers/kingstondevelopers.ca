@@ -1,0 +1,16 @@
+FROM node:14-alpine as node_build
+
+COPY ./package.json /var/www/app/
+COPY ./package-lock.json /var/www/app/
+WORKDIR /var/www/app
+
+RUN (npm ci || (cat /root/.npm/_logs/*.log && exit 1));
+
+COPY ./resources /var/www/app/resources
+COPY ./public /var/www/app/public
+COPY ./tailwind.config.js /var/www/app/
+COPY ./webpack.config.js /var/www/app/
+COPY ./webpack.mix.js /var/www/app/
+
+RUN npm run production \
+    && rm -r node_modules

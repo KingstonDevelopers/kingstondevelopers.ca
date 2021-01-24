@@ -1,0 +1,33 @@
+FROM kingston_developers_node_build:latest as node_build
+
+#
+# Main image
+#
+FROM nginx:alpine
+MAINTAINER Lee Robert (Voziv) "docker@voziv.com"
+
+
+ARG VCS_REF
+ARG VERSION
+ARG BUILD_DATE
+
+# Metadata
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="nginx php-fpm proxy" \
+      org.label-schema.description="Simple nginx container to foward api requests to php-fpm" \
+      org.label-schema.url="https://github.com/KingstonDevelopers/kingstondevelopers.ca" \
+      org.label-schema.vcs-url="https://github.com/KingstonDevelopers/kingstondevelopers.ca" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vendor="Voziv" \
+      org.label-schema.version=$VERSION \
+      org.label-schema.schema-version="1.0" \
+      com.voziv.docker.dockerfile="tools/docker/nginx/nginx.docker"
+
+COPY --chown=nginx:nginx . /var/www/app
+COPY --from=node_build --chown=nginx:nginx /var/www/app /var/www/app
+
+RUN mkdir -p /etc/nginx/includes
+
+COPY tools/docker/nginx/default-server-config.nginx /etc/nginx/includes/default-server-config.conf
+COPY tools/docker/nginx/fastcgi_params.nginx /etc/nginx/fastcgi_params
+COPY tools/docker/nginx/site.template.nginx /etc/nginx/templates/default.conf.template

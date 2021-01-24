@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: tools/docker/app/app.docker
+      args:
+        DOCKER_XDEBUG_PORT: ${DOCKER_XDEBUG_PORT:-9000}
+        DOCKER_XDEBUG_HEADER: ${DOCKER_XDEBUG_HEADER:-""}
+    user: ${DOCKER_PHP_USER_ID}:${DOCKER_PHP_GROUP_ID}
+    environment:
+      CONTAINER_ROLE: "fpm"
+      DB_HOST: "mysql"
+      REDIS_HOST: "redis"
+    volumes:
+      - '.:/var/www/app'
+    depends_on:
+      - mysql
+      - redis
+
+  nginx:
+    build:
+      context: .
+      dockerfile: tools/docker/nginx/nginx.docker
+    volumes:
+      - '.:/var/www/app'
+    environment:
+      PHP_FPM_HOST: "app"
+      VIRTUAL_HOST: "kingstondevelopers.test"
+    depends_on:
+      - app
+
+  mysql:
+    image: 'mysql:8.0'
+    ports:
+      - '${FORWARD_DB_PORT:-3306}:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - 'jetstream-mysql:/var/lib/mysql'
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - '${FORWARD_REDIS_PORT:-6379}:6379'
+    volumes:
+      - 'jetstream-redis:/data'
+  mailhog:
+    image: 'mailhog/mailhog:v1.0.0'
+    ports:
+      - 1025:1025
+      - 8025:8025
+volumes:
+  jetstream-mysql:
+    driver: local
+  jetstream-redis:
+    driver: local

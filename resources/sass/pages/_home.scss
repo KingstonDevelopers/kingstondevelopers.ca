@@ -1,0 +1,11 @@
+.bg-home-header {
+    background-color    : #A853ED;
+    background-image    : url('/img/hero.png');
+    background-size     : cover;
+    background-position : center center;
+    background-repeat   : no-repeat;
+
+    .logo {
+        max-width : 450px;
+    }
+}

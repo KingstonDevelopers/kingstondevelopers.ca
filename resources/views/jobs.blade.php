@@ -3,11 +3,11 @@
 @section('title', 'Job Board')
 
 @section('content')
-    <div class="p-3 p-md-5 m-md-3 text-center bg-home-header text-light">
-        <div class="col-md-5 p-lg-5 mx-auto my-5">
-            <h1 class="display-4 font-weight-normal">Job Board</h1>
-            <p>For now here's a list of links to places jobs may be posted. Soon we'll have our own custom job board.</p>
-            <p><small>P.S. If you're looking for a side project, contact Lee, he needs help with this ;)</small></p>
+    <div class="jumbotron jumbotron-fluid bg-header text-light">
+        <div class="container">
+            <h1 class="display-4">Job Board</h1>
+            <p class="lead">For now here's a list of links to places jobs may be posted. Soon we'll have our own custom
+                job board.</p>
         </div>
     </div>
 

@@ -25,7 +25,10 @@
         </a>
         <a class="py-2 d-none d-md-inline-block" href="/events">Events</a>
         <a class="py-2 d-none d-md-inline-block" href="/jobs">Job Board</a>
-        <a class="py-2 d-none d-md-inline-block" target="_blank" href="http://slack.kingstondevelopers.ca"><i class="fa fa-slack"></i> Slack</a>
+        <a class="py-2 d-none d-md-inline-block" href="/slack/invite">
+            <i class="fa fa-slack"></i>
+            <img src="/slack/badge.svg" alt="slack online counter"/>
+        </a>
     </div>
 </nav>
 

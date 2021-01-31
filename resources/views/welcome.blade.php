@@ -47,7 +47,7 @@
                     <p>Join us on Slack</p>
                     <p class="text-center"><div class="chat-icon"></div></p>
                     <p>
-                        <a class="btn btn-outline-primary" href="http://slack.kingstondevelopers.ca" target="_blank">Get your invite</a>
+                        <a class="btn btn-outline-primary" href="/slack/invite">Get your invite</a>
                     </p>
                 </div>
             </div>

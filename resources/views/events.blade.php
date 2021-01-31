@@ -3,6 +3,13 @@
 @section('title', 'Home')
 
 @section('content')
+    <div class="jumbotron jumbotron-fluid bg-header text-light">
+        <div class="container">
+            <h1 class="display-4">Upcoming events</h1>
+            <p class="lead">Hope to see you at the next one!</p>
+        </div>
+    </div>
+
     @if ($next_event)
         <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
             <div class="col-md-5 p-lg-5 mx-auto my-5">

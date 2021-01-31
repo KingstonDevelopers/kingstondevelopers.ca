@@ -2,103 +2,152 @@
 
 namespace App\Service;
 
-use Illuminate\Notifications\Messages\SlackAttachment;
-use Illuminate\Notifications\Messages\SlackMessage;
-use Illuminate\Notifications\Messages\SlackAttachmentField;
 use GuzzleHttp\Client as HttpClient;
+use Illuminate\Support\Facades\Cache;
 
 class Slack
 {
-    
-    private $http;
-    private $url;
-    
-    public function __construct()
+    private HttpClient $client;
+
+    public function __construct(HttpClient $client)
     {
-        $this->http = new HttpClient; // TODO: Needs to use DI for this instead.
-        $this->url  = config('slack.webhook_url'); // Same here.
+        $this->client = new HttpClient(
+            [
+                'base_uri' => 'https://' . config('slack.url') . '/api/',
+            ]
+        );
     }
-    
-    public function sendMessage(SlackMessage $message)
+
+    public function getTeamLogo()
     {
-        $this->http->post($this->url, $this->buildJsonPayload(
-            $message
-        ));
+        $teamResponse = $this->client->request(
+            'GET',
+            'team.info',
+            [
+                'query' => [
+                    'token' => config('slack.token'),
+                ],
+            ]
+        );
+
+        $response = json_decode($teamResponse->getBody());
+        if (!$response->ok) {
+            throw new \Exception('Error communicating with Slack: ' . $response->error);
+        }
+
+        return $response->team->icon->image_88;
     }
-    
-    //
-    // Below is snipped from SlackWebhookChannel.php from Laravel's notifications.
-    // TODO: Not sure if we can actually use laravel notifications for these notifications.
-    // Will investigate later. Until now this keeps things cleaner
-    //
-    
+
     /**
-     * Build up a JSON payload for the Slack webhook.
-     *
-     * @param  \Illuminate\Notifications\Messages\SlackMessage $message
-     *
      * @return array
+     * @throws \Exception
      */
-    protected function buildJsonPayload(SlackMessage $message)
+    public function getMemberCount()
     {
-        $optionalFields = array_filter([
-                                           'channel'    => data_get($message, 'channel'),
-                                           'icon_emoji' => data_get($message, 'icon'),
-                                           'icon_url'   => data_get($message, 'image'),
-                                           'link_names' => data_get($message, 'linkNames'),
-                                           'username'   => data_get($message, 'username'),
-                                       ]);
-        
-        return array_merge([
-                               'json' => array_merge([
-                                                         'text'        => $message->content,
-                                                         'attachments' => $this->attachments($message),
-                                                     ], $optionalFields),
-                           ], $message->http);
-    }
-    
-    /**
-     * Format the message's attachments.
-     *
-     * @param  \Illuminate\Notifications\Messages\SlackMessage $message
-     *
-     * @return array
-     */
-    protected function attachments(SlackMessage $message)
-    {
-        return collect($message->attachments)->map(function ($attachment) use ($message) {
-            return array_filter([
-                                    'color'       => $attachment->color ?: $message->color(),
-                                    'fallback'    => $attachment->fallback,
-                                    'fields'      => $this->fields($attachment),
-                                    'footer'      => $attachment->footer,
-                                    'footer_icon' => $attachment->footerIcon,
-                                    'image_url'   => $attachment->imageUrl,
-                                    'mrkdwn_in'   => $attachment->markdown,
-                                    'text'        => $attachment->content,
-                                    'title'       => $attachment->title,
-                                    'title_link'  => $attachment->url,
-                                    'ts'          => $attachment->timestamp,
-                                ]);
-        })->all();
-    }
-    
-    /**
-     * Format the attachment's fields.
-     *
-     * @param  \Illuminate\Notifications\Messages\SlackAttachment $attachment
-     *
-     * @return array
-     */
-    protected function fields(SlackAttachment $attachment)
-    {
-        return collect($attachment->fields)->map(function ($value, $key) {
-            if ($value instanceof SlackAttachmentField)
-            {
-                return $value->toArray();
+        $memberResponse = $this->client->request(
+            'GET',
+            'users.list',
+            [
+                'query' => [
+                    'presence' => true,
+                    'token' => config('slack.token'),
+                ],
+            ]
+        );
+
+        $response = json_decode($memberResponse->getBody()->getContents());
+
+        if (!$response->ok) {
+            throw new \Exception('Error communicating with Slack: ' . $response->error);
+        }
+
+        $members = collect($response->members)->filter(
+            function ($member) {
+                return $member->is_bot === false && $member->name !== 'slackbot' && $member->deleted === false;
             }
-            
-            return ['title' => $key, 'value' => $value, 'short' => true];
-        })->values()->all();
+        );
+
+        $total = $members->count();
+
+        if (config('slack.presence', false)) {
+            $members = $members->map(
+                function ($member) {
+                    $member->is_online = Cache::remember(
+                        'member_is_online_' . $member->id,
+                        30 + rand(0, 300),
+                        function () use ($member) {
+                            return $this->isOnline($member->id);
+                        }
+                    );
+
+                    return $member;
+                }
+            );
+
+
+            $online = $members->filter(
+                function ($member) {
+                    return $member->is_online;
+                }
+            )->count();
+
+            return [
+                "total" => $total,
+                "online" => $online,
+            ];
+        } else {
+            return [
+                "total" => $total,
+            ];
+        }
+    }
+
+    public function invite(string $email)
+    {
+        $inviteResponse = $this->client->request(
+            'POST',
+            'users.admin.invite',
+            [
+                'form_params' => [
+                    'token' => config('slack.legacy_token'),
+                    'email' => $email,
+                    'resend' => true,
+                ],
+            ]
+        );
+
+        return json_decode($inviteResponse->getBody()->getContents());
+    }
+
+    public function test()
+    {
+        $memberResponse = $this->client->request(
+            'GET',
+            'users.list',
+            [
+                'query' => [
+                    'token' => config('slack.token'),
+                ],
+            ]
+        );
+
+        return json_decode($memberResponse->getBody()->getContents());
+    }
+
+    public function isOnline(string $userId): bool
+    {
+        $presenceResponse = $this->client->request(
+            'GET',
+            'users.getPresence',
+            [
+                'query' => [
+                    'token' => config('slack.token'),
+                    'user' => $userId,
+                ],
+            ]
+        );
+
+        $decoded = json_decode($presenceResponse->getBody()->getContents());
+        return $decoded->presence === 'active';
     }
 }

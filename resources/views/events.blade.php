@@ -3,7 +3,7 @@
 @section('title', 'Home')
 
 @section('content')
-    <div class="jumbotron jumbotron-fluid bg-header text-light">
+    <div class="p-5 mb-5 bg-header text-light">
         <div class="container">
             <h1 class="display-4">Upcoming events</h1>
             <p class="lead">Hope to see you at the next one!</p>
@@ -13,10 +13,10 @@
     @if ($next_event)
         <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
             <div class="col-md-5 p-lg-5 mx-auto my-5">
-                <h1 class="display-4 font-weight-normal">{{ $next_event['name'] }}</h1>
+                <h1 class="display-4 fw-normal">{{ $next_event['name'] }}</h1>
                 <hr class="dark-divider">
-                <p class="lead font-weight-normal">{{ $next_event['yes_rsvp_count'] }} developers going</p>
-                <p class="lead font-weight-normal">
+                <p class="lead fw-normal">{{ $next_event['yes_rsvp_count'] }} developers going</p>
+                <p class="lead fw-normal">
                     {{ \Carbon\Carbon::createFromTimestamp($next_event['time'] / 1000, 'EST5EDT')->toDayDateTimeString() }}
                     <br>
                     <strong>({{ \Carbon\Carbon::createFromTimestamp($next_event['time'] / 1000, 'EST5EDT')->diffForHumans() }}
@@ -35,13 +35,13 @@
     @endif
 
     @foreach ($upcoming_events as $row => $events)
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
             @foreach ($events as $index => $event)
                 <?php
                 $dark_card = ($row % 2 === 0) ? ($index % 2 === 0) : ($index % 2 === 1);
                 ?>
                 <div
-                    class="<?= ($dark_card) ? 'bg-dark text-white' : 'bg-light'?> mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+                    class="<?= ($dark_card) ? 'bg-dark text-white' : 'bg-light'?> me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
                     <div class="my-3 py-3">
                         <h2 class="display-5">{{ $event['name'] }}</h2>
                         @if ($dark_card)
@@ -49,8 +49,8 @@
                         @else
                             <hr class="light-divider">
                         @endif
-                        <p class="lead font-weight-normal">{{ $event['yes_rsvp_count'] }} developers going</p>
-                        <p class="lead font-weight-normal">
+                        <p class="lead fw-normal">{{ $event['yes_rsvp_count'] }} developers going</p>
+                        <p class="lead fw-normal">
                             {{ \Carbon\Carbon::createFromTimestamp($event['time'] / 1000, 'EST5EDT')->toDayDateTimeString() }}
                         </p>
                     </div>

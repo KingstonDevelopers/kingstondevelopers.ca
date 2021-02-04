@@ -66,7 +66,7 @@ class SlackController extends Controller
         $title = config('slack.badge.title');
 
         $left = (strlen($title) * 6) + 16;
-        if (config('slack.presence')) {
+        if (config('slack.badge.presence')) {
             $value = $members['online'] . '/' . $members['total'];
         } else {
             $value = $members['total'];

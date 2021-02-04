@@ -69,7 +69,7 @@ class Slack
 
         $total = $members->count();
 
-        if (config('slack.presence', false)) {
+        if (config('slack.badge.presence', false)) {
             $members = $members->map(
                 function ($member) {
                     $member->is_online = Cache::remember(

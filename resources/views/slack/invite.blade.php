@@ -4,9 +4,9 @@
 
 @section('content')
 
-    <div class="jumbotron jumbotron-fluid bg-header text-light">
+    <div class="p-5 mb-5 bg-header text-light">
         <div class="container">
-            <h1 class="display-4"><i class="fa fa-slack"></i> Slack</h1>
+            <h1 class="display-4"><i class="fab fa-slack"></i> Slack</h1>
             <p class="lead">
                 Join the <b class="active">{{ $members['total'] }}</b> developers on the
                 <strong>{{ config('slack.community') }}</strong> on Slack.
@@ -19,7 +19,7 @@
             <img src="{{ $logo }}" alt="{{ config('slack.community') }}" class="rounded-circle"/><br/>
             Join the <b class="active">{{ $members['total'] }}</b> developers on the
             <strong>{{ config('slack.community') }}</strong> on Slack.<br>
-            @if(config('slack.presence'))
+            @if(config('slack.badge.presence'))
                 <p class="status"><b class="active">
                         {{ $members['online'] }}</b>
                     developers online now.
@@ -30,8 +30,8 @@
         <div class="col-md-6 mx-auto">
             <hr>
             <form method="post">
-                <div class="form-group">
-                    <label for="email">Email address</label>
+                <div class="mb-3">
+                    <label class="form-label" for="email">Email address</label>
                     <input class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" required name="email"
                            value="{{ old('email') }}"
                            placeholder="you@yourdomain.com"/>

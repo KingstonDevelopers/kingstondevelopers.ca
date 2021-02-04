@@ -3,9 +3,9 @@
 @section('title', 'Invite sent!')
 
 @section('content')
-    <div class="jumbotron jumbotron-fluid bg-header text-light">
+    <div class="p-5 mb-5 bg-header text-light">
         <div class="container">
-            <h1 class="display-4"><i class="fa fa-slack"></i> Slack</h1>
+            <h1 class="display-4"><i class="fab fa-slack"></i> Slack</h1>
             <p class="lead">
                 Join the <b class="active">{{ $members['total'] }}</b> developers on the
                 <strong>{{ config('slack.community') }}</strong> on Slack.
@@ -16,7 +16,7 @@
     <div class="container">
         <div class="text-center">
             <img src="{{ $logo }}" alt="{{ config('slack.community') }}" class="rounded-circle"/><br/>
-            @if(config('slack.presence'))
+            @if(config('slack.badge.presence'))
                 <p class="status">
                     <b class="active">{{ $members['online'] }}</b>
                     developers online now.

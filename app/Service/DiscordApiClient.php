@@ -2,10 +2,10 @@
 
 namespace App\Service;
 
-use App\Contracts\DiscordApi as DiscordApiContract;
+use App\Contracts\DiscordApiContract;
 use GuzzleHttp\Client as HttpClient;
 
-class DiscordApi implements DiscordApiContract
+class DiscordApiClient implements DiscordApiContract
 {
     private HttpClient $client;
 

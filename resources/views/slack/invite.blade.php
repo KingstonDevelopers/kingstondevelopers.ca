@@ -8,7 +8,7 @@
         <div class="container">
             <h1 class="display-4"><i class="fab fa-slack"></i> Slack</h1>
             <p class="lead">
-                Join the <b class="active">{{ $members['total'] }}</b> developers on the
+                Join the <b class="active">{{ $members }}</b> developers on the
                 <strong>{{ config('slack.community') }}</strong> on Slack.
             </p>
         </div>
@@ -17,14 +17,8 @@
     <div class="container">
         <div class="text-center">
             <img src="{{ $logo }}" alt="{{ config('slack.community') }}" class="rounded-circle"/><br/>
-            Join the <b class="active">{{ $members['total'] }}</b> developers on the
+            Join the <b class="active">{{ $members }}</b> developers on the
             <strong>{{ config('slack.community') }}</strong> on Slack.<br>
-            @if(config('slack.badge.presence'))
-                <p class="status"><b class="active">
-                        {{ $members['online'] }}</b>
-                    developers online now.
-                </p>
-            @endif
         </div>
 
         <div class="col-md-6 mx-auto">

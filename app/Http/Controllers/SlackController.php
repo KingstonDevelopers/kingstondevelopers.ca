@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Service\Slack;
+use App\Contracts\SlackApiContract;
+use App\Service\SlackApiContractClient;
 use Carbon\Carbon;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Http\Request;
@@ -10,10 +11,10 @@ use Illuminate\Support\Facades\Cache;
 
 class SlackController extends Controller
 {
-    private Slack $slack;
+    private SlackApiContract $slack;
     private CacheManager $cache;
 
-    public function __construct(Slack $slack, CacheManager $cache)
+    public function __construct(SlackApiContract $slack, CacheManager $cache)
     {
         $this->slack = $slack;
         $this->cache = $cache;
@@ -55,22 +56,9 @@ class SlackController extends Controller
     {
         abort_unless(config('slack.badge.enabled'), 404);
 
-        $members = $this->cache->remember(
-            'members',
-            60,
-            function () {
-                return $this->slack->getMemberCount();
-            }
-        );
-
         $title = config('slack.badge.title');
-
+        $value = $this->slack->getMemberCount();
         $left = (strlen($title) * 6) + 16;
-        if (config('slack.badge.presence')) {
-            $value = $members['online'] . '/' . $members['total'];
-        } else {
-            $value = $members['total'];
-        }
         $width = $left + (strlen($value) * 6) + 10;
 
 

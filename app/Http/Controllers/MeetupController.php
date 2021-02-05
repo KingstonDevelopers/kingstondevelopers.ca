@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Service\Meetup;
+use App\Service\MeetupApiClient;
 use Carbon\Carbon;
-//use DMS\Service\Meetup\MeetupKeyAuthClient;
+//use DMS\Service\MeetupApi\MeetupKeyAuthClient;
 
 class MeetupController extends Controller
 {
@@ -56,7 +56,7 @@ class MeetupController extends Controller
 
         if ($upcoming_events === false)
         {
-            $meetup          = new Meetup();
+            $meetup          = new MeetupApiClient();
             $upcoming_events = $meetup->getUpcomingMeetups(10);
             $expiresAt       = Carbon::now()->addSeconds(30);
 

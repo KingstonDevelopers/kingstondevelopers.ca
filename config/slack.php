@@ -57,8 +57,6 @@ return [
 
         'enabled' => env('SLACK_BADGE_ENABLED', true),
 
-        'presence' => env('SLACK_ENABLE_PRESENCE', false),
-
         'title' => env('SLACK_BADGE_TITLE', 'slack'),
 
         'color' => env('SLACK_BADGE_COLOR', 'E01563'),

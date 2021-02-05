@@ -4,7 +4,7 @@
 namespace App\Contracts;
 
 
-interface DiscordApi
+interface DiscordApiContract
 {
     public function getWidget();
 }

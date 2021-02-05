@@ -15,7 +15,7 @@
         <div class="container">
             <h2 class="display-5 fw-normal">Join us on</h2>
             <hr class="light-divider">
-            <a class="btn text-light" href="{{ app(\App\Contracts\DiscordApi::class)->getWidget()->instant_invite }}" target="_blank">
+            <a class="btn text-light" href="{{ app(\App\Contracts\DiscordApiContract::class)->getWidget()->instant_invite }}" target="_blank">
                 <i class="fab fa-fw fa-2x fa-discord"></i>
             </a>
             <a class="btn text-light" href="https://www.facebook.com/groups/kingstonDevelopers" target="_blank">
@@ -40,30 +40,23 @@
         <div class="container">
 
             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 row-cols-xxl-5 g-4">
-                <div class="col">
-                    <div class="card">
-                        <img src="https://www.placehold.it/300x200/200" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <div class="alert alert-danger">
-                                <h4 class="alert-heading">Oops</h4>
-                                <p>Meetup API broke. We're working on restoring the integration.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <?php $events = [0, 1] ?>
                 @foreach ($events as $event)
                     <div class="col">
                         <div class="card">
-                            <img src="https://www.placehold.it/300x200/{{ $event * 18 }}" class="card-img-top"
+                            <img src="{{ $event->featured_photo->photo_link }}" class="card-img-top"
                                  alt="...">
                             <div class="card-body">
-                                <h5 class="card-title">Upcoming event...</h5>
-                                <p class="card-text">
-                                    The first 100 characters of the meetup description text so that the user gets the
-                                    gist of what it is...
+                                <h5 class="card-title">{{ $event->name }}</h5>
+                                <p class="card-text text-weight">
+                                    <strong>{{ $event->event_date->format('F jS, Y g:i a') }}</strong>
                                 </p>
-                                <p class="btn btn-primary">RSVP</p>
+                                <p class="card-text">
+                                    {{ $event->yes_rsvp_count }} {{ $event->group->who }} going
+                                </p>
+                                <p class="card-text">
+                                    {{ $event->plain_text_no_images_description }}
+                                </p>
+                                <a class="btn btn-primary" href="{{ $event->link }}" target="_blank">RSVP</a>
                             </div>
                         </div>
                     </div>

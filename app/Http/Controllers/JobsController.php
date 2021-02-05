@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Service\Meetup;
+use App\Service\MeetupApiClient;
 use Carbon\Carbon;
 use DMS\Service\Meetup\MeetupKeyAuthClient;
 

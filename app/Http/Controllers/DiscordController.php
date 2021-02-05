@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Service\DiscordApi;
+use App\Contracts\DiscordApiContract;
 use Illuminate\Cache\CacheManager;
 
 class DiscordController extends Controller
 {
-    private DiscordApi $discord;
+    private DiscordApiContract $discord;
     private CacheManager $cache;
 
-    public function __construct(DiscordApi $discordApi, CacheManager $cache)
+    public function __construct(DiscordApiContract $discordApi, CacheManager $cache)
     {
         $this->discord = $discordApi;
         $this->cache = $cache;
@@ -20,13 +20,7 @@ class DiscordController extends Controller
     {
         abort_unless(config('discord.badge.enabled'), 404);
 
-        $widgetJson = $this->cache->remember(
-            'discord-widget-response',
-            60,
-            function () {
-                return $this->discord->getWidget();
-            }
-        );
+        $widgetJson = $this->discord->getWidget();
 
         $title = config('discord.badge.title');
 
@@ -49,24 +43,5 @@ class DiscordController extends Controller
                 ]
             )
             ->header('Content-Type', 'image/svg+xml');
-    }
-
-    public function invite_link()
-    {
-        abort_unless(config('discord.badge.enabled'), 404);
-
-        $widgetJson = $this->getWidgetData();
-
-        return $widgetJson->instant_invite;
-    }
-
-    private function getWidgetData() {
-        return $this->cache->remember(
-            'discord-widget-response',
-            60,
-            function () {
-                return $this->discord->getWidget();
-            }
-        );
     }
 }

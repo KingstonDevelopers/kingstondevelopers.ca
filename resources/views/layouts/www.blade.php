@@ -58,7 +58,7 @@
                 {{--                </li>--}}
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" target="_blank"
-                       href="{{ app(\App\Contracts\DiscordApi::class)->getWidget()->instant_invite }}">
+                       href="{{ app(\App\Contracts\DiscordApiContract::class)->getWidget()->instant_invite }}">
                         <img src="{{ route('discord_badge') }}" alt="discord online counter"/>
                     </a>
                 </li>

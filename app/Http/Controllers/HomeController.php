@@ -15,24 +15,24 @@ class HomeController extends Controller
 
     public function showHome()
     {
-        $allEvents = collect($this->meetupApi->getUpcomingMeetups());
-        $upcomingEvents = $allEvents->filter(
-            function ($event) {
-                return $event->status === 'upcoming';
-            }
-        );
-
-        if ($upcomingEvents->count() === 0) {
-            $upcomingEvents = $allEvents;
-        }
-
-        $upcomingEvents = $upcomingEvents->map(function($event){
-//            dd($event);
-            $date = new \Carbon\Carbon($event->time / 1000);
-            $date->setTimezone('EST5EDT');
-            $event->event_date = $date;
-            return $event;
-        });
+//        $allEvents = collect($this->meetupApi->getUpcomingMeetups());
+//        $upcomingEvents = $allEvents->filter(
+//            function ($event) {
+//                return $event->status === 'upcoming';
+//            }
+//        );
+//
+//        if ($upcomingEvents->count() === 0) {
+//            $upcomingEvents = $allEvents;
+//        }
+//
+//        $upcomingEvents = $upcomingEvents->map(function($event){
+//            $date = new \Carbon\Carbon($event->time / 1000);
+//            $date->setTimezone('EST5EDT');
+//            $event->event_date = $date;
+//            return $event;
+//        });
+        $upcomingEvents = [];
         return view('home', ['events' => $upcomingEvents]);
     }
 }
